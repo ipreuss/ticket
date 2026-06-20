@@ -273,6 +273,7 @@ cmd_create() {
 
     local title="" description="" design="" acceptance=""
     local priority=2 issue_type="task" assignee="" external_ref="" parent="" tags=""
+    local positional_seen=""
 
     # Default assignee to git user.name if available
     assignee=$(git config user.name 2>/dev/null || true)
@@ -290,7 +291,15 @@ cmd_create() {
             --parent) parent="$2"; shift 2 ;;
             --tags) tags="$2"; shift 2 ;;
             -*) echo "Unknown option: $1" >&2; return 1 ;;
-            *) title="$1"; shift ;;
+            *)
+                if [[ -n "$positional_seen" ]]; then
+                    echo "Error: unknown argument '$1'" >&2
+                    return 1
+                fi
+                positional_seen=1
+                title="$1"
+                shift
+                ;;
         esac
     done
 

@@ -96,3 +96,23 @@ Feature: Ticket Creation
     When I run "ticket create 'First ticket'"
     Then the command should succeed
     And the tickets directory should exist
+
+  Scenario: Create rejects unknown long flag
+    When I run "ticket create 'X' --title=Y"
+    Then the command should fail
+    And the output should contain "--title=Y"
+
+  Scenario: Create rejects unknown short flag
+    When I run "ticket create 'X' -z"
+    Then the command should fail
+    And the output should contain "-z"
+
+  Scenario: Create rejects extra positional argument
+    When I run "ticket create My Title Here"
+    Then the command should fail
+    And the output should contain "Title"
+
+  Scenario: Create rejects a second positional even when the first is empty
+    When I run "ticket create '' 'oops'"
+    Then the command should fail
+    And the output should contain "oops"
